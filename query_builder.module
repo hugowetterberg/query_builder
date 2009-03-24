@@ -1,0 +1,10 @@
+<?php
+// $Id$
+
+function query_builder_autoload_info() {
+  return array(
+    'QueryBuilder' => array(
+      'file' => 'QueryBuilder.inc',
+    ),
+  );
+}

@@ -1,0 +1,5 @@
+; $Id$
+name = Query Builder
+description = Provides a a class for building SQL-queries
+dependencies[] = autoload
+core = 6.x
