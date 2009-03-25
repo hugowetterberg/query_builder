@@ -67,6 +67,24 @@ class QueryBuilder {
         'teaser' => array(),
         'log' => array(),
       ));
+      $this->add_table('cs', 'INNER JOIN {node_comment_statistics} AS cs ON cs.nid=n.nid', 'n', array(
+        'last_comment_timestamp' => array(
+          'type' => 'int',
+          'condition' => self::CONDITION_RANGE,
+          'sortable' => TRUE,
+        ),
+        'last_comment_name' => array(),
+        'last_comment_uid' => array(
+          'type' => 'int',
+          'condition' => self::CONDITION_MATCH,
+          'sortable' => TRUE,
+        ),
+        'comment_count' => array(
+          'type' => 'int',
+          'condition' => self::CONDITION_RANGE,
+          'sortable' => TRUE,
+        ),
+      ));
     }
   }
 
