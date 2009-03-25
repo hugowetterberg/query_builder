@@ -242,7 +242,7 @@ class QueryBuilder {
     // Construct the sql query
     $sql = 'SELECT ' . join($q->fields, ', ') .
       "\nFROM " . join($q->joined, "\n\t") .
-      "\nWHERE " . join($q->conditions, "\n\tAND ") .
+      (count($q->conditions) ? "\nWHERE " . join($q->conditions, "\n\tAND ") : '') .
       "\nORDER BY " . $this->field_column($order_column) . ' ' . $q->sort_order;
     if ($this->rewriteSql) {
       return array(db_rewrite_sql($sql), $q->params);
