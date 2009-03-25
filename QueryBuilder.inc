@@ -148,6 +148,15 @@ class QueryBuilder {
     }
   }
 
+  public function debug_query($field_names=array(), $parameters=array()) {
+    global $db_prefix;
+    list($sql, $params) = $this->query($field_names, $parameters);
+    $sql = preg_replace('/\{([^\}]+)\}/', $db_prefix . '$1', $sql);
+    $args = $params;
+    array_unshift($args, $sql);
+    return call_user_func_array('sprintf', $args);
+  }
+
   public function query($field_names=array(), $parameters=array()) {
     if (empty($field_names)) {
       $field_names = $this->defaultFields;
