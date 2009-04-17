@@ -131,7 +131,10 @@ class QueryBuilder {
   }
 
   private function field_column($field) {
-    return $field['table'] . '.' . $field['column'];
+    if ($field['expression'])
+      return $field['expression'];
+    else
+      return $field['table'] . '.' . $field['column'];
   }
 
   private function join_table(&$q, $name) {
@@ -147,6 +150,30 @@ class QueryBuilder {
       return TRUE;
     }
     return FALSE;
+  }
+
+  public function describe() {
+    $desc = array();
+
+    foreach ($this->fields as $name => $def) {
+      $fdesc = $def;
+      unset($fdesc['column']);
+      unset($fdesc['table']);
+      unset($fdesc['expression']);
+      switch ($fdesc['condition']) {
+        case self::CONDITION_RANGE:
+          $cond = 'range';
+          break;
+        case self::CONDITION_MATCH:
+          $cond = 'match';
+          break;
+        default:
+          $cond = 'none';
+      }
+      $fdesc['condition'] = $cond;
+      $desc[$name] = $fdesc;
+    }
+    return $desc;
   }
 
   public function handle_parameter(&$q, $key, $value) {
