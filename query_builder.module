@@ -8,3 +8,11 @@ function query_builder_autoload_info() {
     ),
   );
 }
+
+/**
+ * Implementation of hook_enable().
+ */
+function query_builder_enable() {
+  // Flush the autoload caches so that our classes are registered
+  autoload_flush_caches();
+}
