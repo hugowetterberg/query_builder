@@ -61,6 +61,10 @@ class QueryBuilder {
           'condition' => self::CONDITION_NONE,
           'sortable' => TRUE,
         ),
+        'language' => array(
+          'condition' => self::CONDITION_MATCH,
+          'sortable' => FALSE,
+        ),
       ));
       $this->add_table('r', 'INNER JOIN {node_revisions} AS r ON r.vid=n.vid', 'n', array(
         'body' => array(),
