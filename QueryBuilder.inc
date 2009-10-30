@@ -89,6 +89,9 @@ class QueryBuilder {
           'sortable' => TRUE,
         ),
       ));
+      $this->add_table('u', 'INNER JOIN {users} AS u ON u.uid=n.uid', 'n', array(
+        'name' => array(),
+      ));
     }
   }
 
