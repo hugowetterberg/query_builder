@@ -24,6 +24,11 @@ class QueryBuilder {
           'condition' => self::CONDITION_RANGE,
           'sortable' => TRUE,
         ),
+        'vid' => array(
+          'type' => 'int',
+          'condition' => self::CONDITION_RANGE,
+          'sortable' => TRUE,
+        ),
         'type' => array(
           'condition' => self::CONDITION_MATCH,
         ),
