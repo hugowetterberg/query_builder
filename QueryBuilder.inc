@@ -136,14 +136,14 @@ class QueryBuilder {
   }
 
   private function ensure_join(&$q, $field) {
-    if (!$q->joined[$field['table']]) {
+    if (!isset($q->joined[$field['table']])) {
       return $this->join_table($q, $field['table']);
     }
     return TRUE;
   }
 
   private function field_column($field) {
-    if ($field['expression'])
+    if (!empty($field['expression']))
       return $field['expression'];
     else
       return $field['table'] . '.' . $field['column'];
@@ -157,6 +157,10 @@ class QueryBuilder {
         if (!$this->join_table($q, $table['parent'])) {
           return FALSE;
         }
+      }
+      if (!is_object($q)) {
+        debug_print_backtrace();
+        die;
       }
       $q->joined[$name] = $table['join'];
       return TRUE;
@@ -303,7 +307,7 @@ class QueryBuilder {
     }
 
     // Get info for the order field
-    $order_column = $this->use_field($q->joined, $q->sort_field);
+    $order_column = $this->use_field($q, $q->sort_field);
 
     // Construct the sql query
     $sql = 'SELECT ' . join($q->fields, ', ') .

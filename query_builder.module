@@ -15,4 +15,71 @@ function query_builder_autoload_info() {
 function query_builder_enable() {
   // Flush the autoload caches so that our classes are registered
   autoload_flush_caches();
+  
+  // Empty the sevices cache so that we can replace the node index handler.
+  cache_clear_all('services:', 'cache', TRUE);
+}
+
+function query_builder_services_resources_alter(&$resources, $endpoint) {
+  if (isset($resources['node']['index'])) {
+    $resources['node']['index'] = array(
+      'callback' => 'query_builder_node_index_replacement',
+      'args' => array(
+        array(
+          'name' => 'page',
+          'optional' => TRUE,
+          'type' => 'int',
+          'description' => 'The zero-based index of the page to get, defaults to 0.',
+          'default value' => 0,
+          'source' => array('param' => 'page'),
+        ),
+        array(
+          'name' => 'fields',
+          'optional' => TRUE,
+          'type' => 'string',
+          'description' => 'The fields to get.',
+          'default value' => '*',
+          'source' => array('param' => 'fields'),
+        ),
+        array(
+          'name' => 'parameters',
+          'optional' => TRUE,
+          'type' => 'struct',
+          'description' => 'Parameters',
+          'default value' => NULL,
+          'source' => 'param',
+        ),
+      ),
+      'access arguments' => array('access content'),
+    );
+  }
+}
+
+function query_builder_node_index_replacement($page = 0, $fields = array(), $parameters = array()) {
+  $params = array();
+
+  $builder = new QueryBuilder();
+  $parameters = (array)$parameters;
+
+  if (isset($parameters['__describe'])) {
+    return $builder->describe();
+  }
+
+  if (is_string($fields) && !empty($fields)) {
+    $fields = preg_split('/,\s?/', $fields);
+  }
+
+  if (!user_access('administer nodes') || !isset($parameters['status'])) {
+    $parameters['status'] = 1;
+  }
+
+  list($sql, $params) = $builder->query($fields, $parameters);
+  $res = db_query_range($sql, $params, $page * 20, 20);
+
+  $nodes = array();
+  while ($node = db_fetch_object($res)) {
+    $node->uri = services_resource_uri(array('node', $node->nid));
+    $nodes[] = $node;
+  }
+  return $nodes;
 }
